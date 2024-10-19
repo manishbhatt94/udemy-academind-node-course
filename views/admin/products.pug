@@ -1,0 +1,26 @@
+extends ../layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet", href="/css/product.css")
+
+
+block content
+  if prods.length > 0
+    .grid
+      each product in prods
+        article.card.product-item
+          header.card__header
+            h1.product__title #{product.title}
+          .card__image
+            img(src=(product.imageUrl), alt=(product.title), width="320", height="240", loading="lazy")
+          .card__content
+            h2.product__price ₹#{product.price}
+            p.product__description #{product.description}
+          .card__actions
+            a.btn(href="/admin/edit-product") Edit
+            form(action="/admin/delete-product", method="post")
+              button.btn(type="submit") Delete
+  else
+    .text-center
+      h1 No Products
+      a(href="/admin/add-product") Add a product
