@@ -17,7 +17,9 @@ block content
             h2.product__price ₹#{product.price}
             p.product__description #{product.description}
           .card__actions
-            button.btn(type="button") Add to Cart
+            a.btn(href=(`/products/${product.id}`)) Details
+            form(action="/add-to-cart", method="post")
+              button.btn(type="submit") Add to Cart
     .text-center
       a(href="/products") View all products
   else
