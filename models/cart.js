@@ -6,7 +6,7 @@ const rootDir = require('../util/path');
 class Cart {
   static filePath = path.join(rootDir, 'data', 'cart.json');
 
-  static addProduct(id, productPrice) {
+  static addProduct(id, productPrice, cb) {
     // Fetch the previous cart
     fs.readFile(Cart.filePath, (err, fileContent) => {
       let cart = { products: [], totalPrice: 0 };
@@ -30,7 +30,7 @@ class Cart {
       }
       cart.totalPrice = cart.totalPrice + productPrice;
       fs.writeFile(Cart.filePath, JSON.stringify(cart), (err) => {
-        console.error(err);
+        cb(err);
       });
     });
   }
