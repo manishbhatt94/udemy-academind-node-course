@@ -5,4 +5,11 @@ block styles
 
 
 block content
-  h1.text-center Product details page &lt;#{productId}&gt;
+  .text-center
+    h1 #{product.title}
+    hr
+    div
+      img(src=(product.imageUrl), alt=(product.title), width="640", height="480")
+    h2 ₹#{product.price}
+    p #{product.description}
+    include ../includes/add-to-cart.pug

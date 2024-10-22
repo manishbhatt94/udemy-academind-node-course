@@ -23,11 +23,11 @@ exports.getIndex = (req, res, next) => {
 exports.getProductDetails = (req, res, next) => {
   const { productId } = req.params;
   Product.findById(productId, (product) => {
-    console.log({ product });
-  });
-  res.render('shop/product-detail', {
-    pageTitle: '',
-    productId,
+    res.render('shop/product-detail', {
+      pageTitle: `Shop for ${product.title}`,
+      product,
+      path: '/products',
+    });
   });
 };
 
