@@ -10,6 +10,6 @@ block content
     hr
     div
       img(src=(product.imageUrl), alt=(product.title), width="640", height="480")
-    h2 ₹#{product.price}
+    h2 ₹#{product.price.toFixed(2)}
     p #{product.description}
     include ../includes/add-to-cart.pug
