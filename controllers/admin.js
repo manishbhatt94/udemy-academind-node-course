@@ -16,9 +16,14 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
-  // TODO: implement this
+  const editMode = req.query.edit;
+  if (!editMode) {
+    return res.redirect('/');
+  }
   res.render('admin/add-edit-product', {
     pageTitle: 'Edit Product',
+    path: '/admin/edit-product',
+    editing: editMode,
   });
 };
 
