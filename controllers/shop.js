@@ -24,6 +24,9 @@ exports.getIndex = (req, res, next) => {
 exports.getProductDetails = (req, res, next) => {
   const { productId } = req.params;
   Product.findById(productId, (product) => {
+    if (!product) {
+      return res.redirect('/product-not-found');
+    }
     res.render('shop/product-detail', {
       pageTitle: `Shop for ${product.title}`,
       product,

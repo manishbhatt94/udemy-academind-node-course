@@ -1,6 +1,7 @@
 const express = require('express');
 
 const shopController = require('../controllers/shop');
+const errorController = require('../controllers/error');
 
 const router = express.Router();
 
@@ -15,6 +16,8 @@ router.post('/cart', shopController.postCart);
 router.get('/checkout', shopController.getCheckout);
 
 router.get('/orders', shopController.getOrders);
+
+router.get('/product-not-found', errorController.getProductNotFound);
 
 router.get('/', shopController.getIndex);
 
