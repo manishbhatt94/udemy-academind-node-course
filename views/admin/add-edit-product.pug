@@ -7,7 +7,7 @@ block styles
 
 block content
   form.product-form(
-    action=(editing ? `/admin/edit-product/${product.id}` :"/admin/add-product"),
+    action=(editing ? `/admin/edit-product` :"/admin/add-product"),
     method="post",
     autocomplete="off"
   )
