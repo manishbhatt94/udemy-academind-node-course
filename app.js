@@ -25,4 +25,7 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
+// Express error middleware (err, req, res, next) format
+app.use(errorController.getGenericError);
+
 app.listen(3000);
