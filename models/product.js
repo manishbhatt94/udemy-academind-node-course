@@ -17,7 +17,8 @@ function getProductsFromFile(cb) {
 class Product {
   static filePath = path.join(rootDir, 'data', 'products.json');
 
-  constructor({ title, imageUrl, price, description }) {
+  constructor({ id, title, imageUrl, price, description }) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
