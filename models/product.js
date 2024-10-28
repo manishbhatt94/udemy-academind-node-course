@@ -9,10 +9,10 @@ function getProductsFromFile(cb) {
   fs.readFile(Product.filePath, (err, fileContent) => {
     let products = [];
     if (err) {
-      return cb(products);
+      return cb(err, products);
     }
     products = fileContent ? JSON.parse(fileContent) : [];
-    cb(products);
+    cb(null, products);
   });
 }
 
@@ -28,7 +28,10 @@ class Product {
   }
 
   save(cb) {
-    getProductsFromFile((existingProducts) => {
+    getProductsFromFile((err, existingProducts) => {
+      if (err) {
+        return cb(err);
+      }
       let updatedProducts = [...existingProducts];
       if (this.id) {
         const index = updatedProducts.findIndex((p) => p.id === this.id);
@@ -51,14 +54,31 @@ class Product {
   }
 
   static fetchAll(cb) {
-    getProductsFromFile(cb);
+    getProductsFromFile((err, products) => {
+      if (err) {
+        return cb(err);
+      }
+      cb(null, products);
+    });
   }
 
   static findById(id, cb) {
-    getProductsFromFile((products) => {
+    getProductsFromFile((err, products) => {
+      if (err) {
+        return cb(err);
+      }
       const product = products.find((p) => p.id === id);
-      cb(product);
+      if (!product) {
+        const err = createError(400, 'Cannot find product with invalid productId', {
+          expose: true,
+          view: 'product-not-found',
+        });
+        return cb(err);
+      }
+      cb(null, product);
     });
+  }
+
   }
 }
 

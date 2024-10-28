@@ -9,6 +9,7 @@ exports.getProductNotFound = (req, res, next) => {
 };
 
 exports.getGenericError = (err, req, res, next) => {
+  console.error(err);
   const pageTitle = 'Something went wrong';
   if (!createError.isHttpError(err)) {
     return res.render('generic-error', {
@@ -18,6 +19,14 @@ exports.getGenericError = (err, req, res, next) => {
     });
   }
   const { expose, message } = err;
+  if (err.view) {
+    console.log(err.view);
+    return res.status(err.status).render(err.view, {
+      pageTitle,
+      expose,
+      message: expose ? message : null,
+    });
+  }
   res.status(err.status).render('generic-error', {
     pageTitle,
     expose,

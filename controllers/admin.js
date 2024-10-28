@@ -13,7 +13,6 @@ exports.postAddProduct = (req, res, next) => {
   const product = new Product({ id: null, title, imageUrl, price: Number(price), description });
   product.save((err) => {
     if (err) {
-      console.log(err);
       return next(err);
     }
     res.redirect('/');
@@ -26,9 +25,9 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect('/');
   }
   const { productId } = req.params;
-  Product.findById(productId, (product) => {
-    if (!product) {
-      return res.redirect('/product-not-found');
+  Product.findById(productId, (err, product) => {
+    if (err) {
+      return next(err);
     }
     res.render('admin/add-edit-product', {
       pageTitle: 'Edit Product',
@@ -44,7 +43,6 @@ exports.postEditProduct = (req, res, next) => {
   const updatedProduct = new Product({ id, title, imageUrl, price: Number(price), description });
   updatedProduct.save((err) => {
     if (err) {
-      console.log(err);
       return next(err);
     }
     res.redirect(`/products/${id}`);
@@ -52,8 +50,10 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getAdminProducts = (req, res, next) => {
-  // TODO: implement this
-  Product.fetchAll((products) => {
+  Product.fetchAll((err, products) => {
+    if (err) {
+      return next(err);
+    }
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin Products',
