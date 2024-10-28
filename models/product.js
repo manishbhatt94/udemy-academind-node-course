@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const createError = require('http-errors');
+
 const rootDir = require('../util/path');
 
 function getProductsFromFile(cb) {
@@ -26,11 +28,22 @@ class Product {
   }
 
   save(cb) {
-    this.id = Math.trunc(Math.random() * 1e8).toString();
-
     getProductsFromFile((existingProducts) => {
-      existingProducts.push(this);
-      fs.writeFile(Product.filePath, JSON.stringify(existingProducts), (err) => {
+      let updatedProducts = [...existingProducts];
+      if (this.id) {
+        const index = updatedProducts.findIndex((p) => p.id === this.id);
+        if (index === -1) {
+          const err = createError(400, 'Cannot edit product with invalid productId', {
+            expose: true,
+          });
+          return cb(err);
+        }
+        updatedProducts[index] = this;
+      } else {
+        this.id = Math.trunc(Math.random() * 1e8).toString();
+        updatedProducts.push(this);
+      }
+      fs.writeFile(Product.filePath, JSON.stringify(updatedProducts), (err) => {
         console.log(err);
         cb(err);
       });
