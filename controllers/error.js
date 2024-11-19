@@ -20,7 +20,7 @@ exports.getGenericError = (err, req, res, next) => {
   }
   const { expose, message } = err;
   if (err.view) {
-    console.log(err.view);
+    console.log('err.view =>', err.view);
     return res.status(err.status).render(err.view, {
       pageTitle,
       expose,

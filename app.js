@@ -28,4 +28,4 @@ app.use(errorController.get404);
 // Express error middleware (err, req, res, next) format
 app.use(errorController.getGenericError);
 
-app.listen(3000);
+app.listen(3000, () => console.log('Server listening on port 3000'));
