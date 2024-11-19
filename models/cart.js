@@ -18,6 +18,15 @@ function getCartFromFile(cb) {
   });
 }
 
+function writeCartToFile(cart, cb) {
+  fs.writeFile(Cart.filePath, JSON.stringify(cart), (err) => {
+    if (err) {
+      return cb(err);
+    }
+    cb();
+  });
+}
+
 class Cart {
   static filePath = path.join(rootDir, 'data', 'cart.json');
 
@@ -43,8 +52,8 @@ class Cart {
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice = cart.totalPrice + productPrice;
-      fs.writeFile(Cart.filePath, JSON.stringify(cart), (err) => {
-        cb(err);
+      writeCartToFile(cart, (err) => {
+        cb(err ?? null);
       });
     });
   }
