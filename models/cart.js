@@ -3,20 +3,29 @@ const path = require('path');
 
 const rootDir = require('../util/path');
 
+function getCartFromFile(cb) {
+  fs.readFile(Cart.filePath, (err, fileContent) => {
+    let cart = { products: [], totalPrice: 0 };
+    if (err) {
+      return cb(err, cart);
+    }
+    try {
+      cart = fileContent ? JSON.parse(fileContent) : cart;
+    } catch (err) {
+      return cb(err, cart);
+    }
+    cb(null, cart);
+  });
+}
+
 class Cart {
   static filePath = path.join(rootDir, 'data', 'cart.json');
 
   static addProduct(id, productPrice, cb) {
     // Fetch the previous cart
-    fs.readFile(Cart.filePath, (err, fileContent) => {
-      let cart = { products: [], totalPrice: 0 };
+    getCartFromFile((err, cart) => {
       if (err) {
-        return cb(err, cart);
-      }
-      try {
-        cart = fileContent ? JSON.parse(fileContent) : cart;
-      } catch (err) {
-        return cb(err, cart);
+        return cb(err);
       }
       // Analyze the cart => Find existing product
       const existingProductIndex = cart.products.findIndex((p) => p.id === id);
