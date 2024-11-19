@@ -20,6 +20,15 @@ function getProductsFromFile(cb) {
   });
 }
 
+function writeProductsToFile(products, cb) {
+  fs.writeFile(Product.filePath, JSON.stringify(products), (err) => {
+    if (err) {
+      return cb(err);
+    }
+    cb();
+  });
+}
+
 class Product {
   static filePath = path.join(rootDir, 'data', 'products.json');
 
@@ -50,9 +59,8 @@ class Product {
         this.id = Math.trunc(Math.random() * 1e8).toString();
         updatedProducts.push(this);
       }
-      fs.writeFile(Product.filePath, JSON.stringify(updatedProducts), (err) => {
-        console.log(err);
-        cb(err);
+      writeProductsToFile(updatedProducts, (err) => {
+        cb(err ?? null);
       });
     });
   }
