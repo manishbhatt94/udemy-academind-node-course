@@ -10,8 +10,13 @@ class Cart {
     // Fetch the previous cart
     fs.readFile(Cart.filePath, (err, fileContent) => {
       let cart = { products: [], totalPrice: 0 };
-      if (!err) {
-        cart = JSON.parse(fileContent);
+      if (err) {
+        return cb(err, cart);
+      }
+      try {
+        cart = fileContent ? JSON.parse(fileContent) : cart;
+      } catch (err) {
+        return cb(err, cart);
       }
       // Analyze the cart => Find existing product
       const existingProductIndex = cart.products.findIndex((p) => p.id === id);

@@ -11,7 +11,11 @@ function getProductsFromFile(cb) {
     if (err) {
       return cb(err, products);
     }
-    products = fileContent ? JSON.parse(fileContent) : [];
+    try {
+      products = fileContent ? JSON.parse(fileContent) : products;
+    } catch (err) {
+      return cb(err, products);
+    }
     cb(null, products);
   });
 }
