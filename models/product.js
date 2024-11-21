@@ -4,6 +4,7 @@ const path = require('path');
 const createError = require('http-errors');
 
 const rootDir = require('../util/path');
+const Cart = require('./cart');
 
 function getProductsFromFile(cb) {
   fs.readFile(Product.filePath, (err, fileContent) => {
@@ -91,6 +92,43 @@ class Product {
     });
   }
 
+  static deleteById(id, cb) {
+    getProductsFromFile((err, existingProducts) => {
+      if (err) {
+        return cb(err);
+      }
+      let product = null;
+      const updatedProducts = existingProducts.filter((p) => {
+        if (p.id === id) {
+          product = p;
+          return false;
+        }
+        return true;
+      });
+      if (!product) {
+        // product not found case
+        const err = createError(400, 'Cannot delete product with invalid productId', {
+          expose: true,
+          view: 'product-not-found',
+        });
+        return cb(err);
+      }
+      writeProductsToFile(updatedProducts, (err) => {
+        if (err) {
+          return cb(err);
+        }
+        // Now also delete the product from cart
+        Cart.deleteProduct(id, product.price, (err) => {
+          if (err) {
+            console.error(
+              'Could not delete product entry from cart after successful product deletion. Error =>',
+              err
+            );
+          }
+          cb();
+        });
+      });
+    });
   }
 }
 
