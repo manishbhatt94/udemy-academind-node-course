@@ -75,6 +75,15 @@ class Cart {
       });
     });
   }
+
+  static fetchCart(cb) {
+    getCartFromFile((err, cart) => {
+      if (err) {
+        return cb(err);
+      }
+      cb(null, cart);
+    });
+  }
 }
 
 module.exports = Cart;

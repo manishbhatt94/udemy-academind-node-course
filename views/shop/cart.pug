@@ -6,3 +6,18 @@ block styles
 
 block content
   h1.text-center Customer Shopping Cart page
+  if isCartEmpty
+    section.text-center
+      h2 Your shopping cart is empty
+      a(href="/products") Check products to shop
+  else
+    section
+      h2 Shopping Cart
+      p Total cart value: ₹#{cart.totalPrice}
+      h3 Cart Items
+      ul
+        each product in cart.products
+          li
+            a(href=(`/products/${product.id}`)) #{product.id}
+            | &nbsp;&nbsp;
+            span Quantity: #{product.qty}

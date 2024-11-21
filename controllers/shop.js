@@ -42,9 +42,20 @@ exports.getProductDetails = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  res.render('shop/cart', {
-    pageTitle: 'Your Cart',
-    path: '/cart',
+  Cart.fetchCart((err, cart) => {
+    if (err) {
+      return next(err);
+    }
+    let isCartEmpty = true;
+    if (cart?.products?.length) {
+      isCartEmpty = false;
+    }
+    res.render('shop/cart', {
+      pageTitle: 'Your Cart',
+      path: '/cart',
+      isCartEmpty,
+      cart,
+    });
   });
 };
 
