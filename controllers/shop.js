@@ -78,7 +78,15 @@ exports.postCart = (req, res, next) => {
     if (err) {
       return next(err);
     }
-    Cart.addProduct(productId, product.price, () => {
+    Cart.addProduct(productId, product.price, (err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect('/cart');
+    });
+  });
+};
+
       res.redirect('/cart');
     });
   });
