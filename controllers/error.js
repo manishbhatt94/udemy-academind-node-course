@@ -9,7 +9,7 @@ exports.getProductNotFound = (req, res, next) => {
 };
 
 exports.getGenericError = (err, req, res, next) => {
-  console.error(err);
+  console.error('errorlog', err);
   const pageTitle = 'Something went wrong';
   if (!createError.isHttpError(err)) {
     return res.render('generic-error', {
