@@ -16,8 +16,10 @@ block content
       p Total cart value: ₹#{cart.totalPrice}
       h3 Cart Items
       ul
-        each product in cart.products
+        each item in cart.items
           li
-            a(href=(`/products/${product.id}`)) #{product.id}
+            a(href=(`/products/${item.info.id}`)) #{item.info.title}
             | &nbsp;&nbsp;
-            span Quantity: #{product.qty}
+            span Price: #{item.info.price.toFixed(2)}
+            | &nbsp;&nbsp;
+            span Quantity: #{item.qty}
