@@ -87,6 +87,16 @@ exports.postCart = (req, res, next) => {
   });
 };
 
+exports.postCartDeleteProduct = (req, res, next) => {
+  const { productId } = req.body;
+  Product.findById(productId, (err, product) => {
+    if (err) {
+      return next(err);
+    }
+    Cart.deleteProduct(productId, product.price, (err) => {
+      if (err) {
+        return next(err);
+      }
       res.redirect('/cart');
     });
   });

@@ -19,7 +19,11 @@ block content
         each item in cart.items
           li
             a(href=(`/products/${item.info.id}`)) #{item.info.title}
-            | &nbsp;&nbsp;
+            | &nbsp;◆&nbsp;
             span Price: #{item.info.price.toFixed(2)}
-            | &nbsp;&nbsp;
+            | &nbsp;◆&nbsp;
             span Quantity: #{item.qty}
+            | &nbsp;◆&nbsp;
+            form(action="/cart-delete-item", method="post")
+              input(type="hidden", name="productId", value=(item.info.id))
+              button.btn(type="submit") Delete
