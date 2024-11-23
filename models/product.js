@@ -42,29 +42,11 @@ class Product {
     this.description = description;
   }
 
-  save(cb) {
-    getProductsFromFile((err, existingProducts) => {
-      if (err) {
-        return cb(err);
-      }
-      let updatedProducts = [...existingProducts];
-      if (this.id) {
-        const index = updatedProducts.findIndex((p) => p.id === this.id);
-        if (index === -1) {
-          const err = createError(400, 'Cannot edit product with invalid productId', {
-            expose: true,
-          });
-          return cb(err);
-        }
-        updatedProducts[index] = this;
-      } else {
-        this.id = Math.trunc(Math.random() * 1e8).toString();
-        updatedProducts.push(this);
-      }
-      writeProductsToFile(updatedProducts, (err) => {
-        cb(err ?? null);
-      });
-    });
+  save() {
+    return database.execute(
+      'INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)',
+      [this.title, this.price, this.description, this.imageUrl]
+    );
   }
 
   static fetchAll() {
