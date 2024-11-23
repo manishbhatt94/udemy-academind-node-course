@@ -53,21 +53,8 @@ class Product {
     return database.execute('SELECT * FROM products');
   }
 
-  static findById(id, cb) {
-    getProductsFromFile((err, products) => {
-      if (err) {
-        return cb(err);
-      }
-      const product = products.find((p) => p.id === id);
-      if (!product) {
-        const err = createError(400, 'Cannot find product with invalid productId', {
-          expose: true,
-          view: 'product-not-found',
-        });
-        return cb(err);
-      }
-      cb(null, product);
-    });
+  static findById(id) {
+    return database.execute('SELECT * FROM products WHERE products.id = ?', [id]);
   }
 
   static deleteById(id, cb) {

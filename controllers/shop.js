@@ -27,16 +27,16 @@ exports.getIndex = (req, res, next) => {
 
 exports.getProductDetails = (req, res, next) => {
   const { productId } = req.params;
-  Product.findById(productId, (err, product) => {
-    if (err) {
-      return next(err);
-    }
-    res.render('shop/product-detail', {
-      pageTitle: `Shop for ${product.title}`,
-      product,
-      path: '/products',
-    });
-  });
+  Product.findById(productId)
+    .then(([rows]) => {
+      const [product] = rows;
+      res.render('shop/product-detail', {
+        pageTitle: `Shop for ${product.title}`,
+        product,
+        path: '/products',
+      });
+    })
+    .catch(next);
 };
 
 exports.getCart = (req, res, next) => {
