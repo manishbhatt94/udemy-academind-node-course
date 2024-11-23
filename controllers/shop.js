@@ -2,29 +2,27 @@ const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((err, products) => {
-    if (err) {
-      return next(err);
-    }
-    res.render('shop/product-list', {
-      prods: products,
-      pageTitle: 'All Products',
-      path: '/products',
-    });
-  });
+  Product.fetchAll()
+    .then(([rows]) => {
+      res.render('shop/product-list', {
+        prods: rows,
+        pageTitle: 'All Products',
+        path: '/products',
+      });
+    })
+    .catch(next);
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll((err, products) => {
-    if (err) {
-      return next(err);
-    }
-    res.render('shop/index', {
-      prods: products,
-      pageTitle: 'Shop',
-      path: '/',
-    });
-  });
+  Product.fetchAll()
+    .then(([rows]) => {
+      res.render('shop/index', {
+        prods: rows,
+        pageTitle: 'Shop',
+        path: '/',
+      });
+    })
+    .catch(next);
 };
 
 exports.getProductDetails = (req, res, next) => {
@@ -53,22 +51,21 @@ exports.getCart = (req, res, next) => {
         isCartEmpty: true,
       });
     }
-    Product.fetchAll((err, allProducts) => {
-      if (err) {
-        return next(err);
-      }
-      const productCart = { value: cart.totalPrice, items: [] };
-      for (const item of cart.products) {
-        const info = allProducts.find((p) => p.id === item.id);
-        productCart.items.push({ info, qty: item.qty });
-      }
-      res.render('shop/cart', {
-        pageTitle: 'Your Cart',
-        path: '/cart',
-        isCartEmpty: false,
-        cart: productCart,
-      });
-    });
+    Product.fetchAll()
+      .then(([allProducts]) => {
+        const productCart = { value: cart.totalPrice, items: [] };
+        for (const item of cart.products) {
+          const info = allProducts.find((p) => p.id === item.id);
+          productCart.items.push({ info, qty: item.qty });
+        }
+        res.render('shop/cart', {
+          pageTitle: 'Your Cart',
+          path: '/cart',
+          isCartEmpty: false,
+          cart: productCart,
+        });
+      })
+      .catch(next);
   });
 };
 
