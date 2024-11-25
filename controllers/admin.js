@@ -23,28 +23,34 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect('/');
   }
   const { productId } = req.params;
-  Product.findById(productId, (err, product) => {
-    if (err) {
-      return next(err);
-    }
-    res.render('admin/add-edit-product', {
-      pageTitle: 'Edit Product',
-      path: '/admin/edit-product',
-      editing: Boolean(editMode),
-      product,
-    });
-  });
+  Product.findByPk(productId)
+    .then((product) => {
+      res.render('admin/add-edit-product', {
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: Boolean(editMode),
+        product,
+      });
+    })
+    .catch(next);
 };
 
 exports.postEditProduct = (req, res, next) => {
   const { id, title, imageUrl, price, description } = req.body;
-  const updatedProduct = new Product({ id, title, imageUrl, price: Number(price), description });
-  updatedProduct.save((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect(`/products/${id}`);
-  });
+  Product.findByPk(id)
+    .then((product) => {
+      product.set({
+        title,
+        description,
+        price: Number(price),
+        imageUrl,
+      });
+      return product.save();
+    })
+    .then(() => {
+      res.redirect(`/products/${id}`);
+    })
+    .catch(next);
 };
 
 exports.postDeleteProduct = (req, res, next) => {
