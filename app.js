@@ -17,6 +17,8 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
 
+const sequelize = require('./util/database');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -28,4 +30,14 @@ app.use(errorController.get404);
 // Express error middleware (err, req, res, next) format
 app.use(errorController.getGenericError);
 
-app.listen(3000, () => console.log('Server listening on port 3000'));
+function setup() {
+  return sequelize.sync();
+}
+
+setup()
+  .then(() => {
+    app.listen(3000, () => console.log('Server listening on port 3000'));
+  })
+  .catch((err) => {
+    console.error('setup error', err);
+  });
