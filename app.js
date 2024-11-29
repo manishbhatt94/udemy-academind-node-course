@@ -18,6 +18,8 @@ const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
 
 const sequelize = require('./util/database');
+const Product = require('./models/product');
+const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,7 +33,13 @@ app.use(errorController.get404);
 app.use(errorController.getGenericError);
 
 function setup() {
+  defineDatabaseRelations();
   return sequelize.sync();
+
+  function defineDatabaseRelations() {
+    Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+    User.hasMany(Product);
+  }
 }
 
 setup()
