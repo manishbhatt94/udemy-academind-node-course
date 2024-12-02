@@ -24,6 +24,15 @@ const User = require('./models/user');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch(next);
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
@@ -42,7 +51,19 @@ function setup() {
   }
 }
 
+function createDummyUser() {
+  return User.findByPk(1).then((user) => {
+    if (!user) {
+      console.log('Creating dummy user');
+      return User.create({ email: 'john.doe@fake.users.com', name: 'John Doe' });
+    }
+    console.log('Dummy user already exists');
+    return user;
+  });
+}
+
 setup()
+  .then(createDummyUser)
   .then(() => {
     app.listen(3000, () => console.log('Server listening on port 3000'));
   })
