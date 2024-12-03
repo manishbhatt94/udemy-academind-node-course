@@ -84,8 +84,7 @@ function createCartForDummyUser() {
       }
       console.log('Dummy cart already exists');
       return cart;
-    })
-    .then((cart) => console.log('Dummy user cart =>', cart));
+    });
 }
 
 setup()
