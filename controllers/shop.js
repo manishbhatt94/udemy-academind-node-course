@@ -1,4 +1,3 @@
-const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
@@ -47,8 +46,6 @@ exports.getCart = (req, res, next) => {
       return cart.getProducts();
     })
     .then((products) => {
-      console.log(JSON.stringify({ products }, null, 2));
-      console.log(JSON.stringify({ cart }, null, 2));
       const totalPrice = products.reduce((sum, curr) => {
         return sum + curr.price * curr.cartItem.quantity;
       }, 0);
@@ -96,17 +93,13 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
-  Product.findById(productId, (err, product) => {
-    if (err) {
-      return next(err);
-    }
-    Cart.deleteProduct(productId, product.price, (err) => {
-      if (err) {
-        return next(err);
-      }
-      res.redirect('/cart');
-    });
-  });
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.removeProduct(productId);
+    })
+    .then(() => res.redirect('/cart'))
+    .catch(next);
 };
 
 exports.getCheckout = (req, res, next) => {
