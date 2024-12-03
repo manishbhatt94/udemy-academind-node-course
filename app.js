@@ -70,8 +70,27 @@ function createDummyUser() {
   });
 }
 
+function createCartForDummyUser() {
+  let dummyUser = null;
+  return User.findByPk(1)
+    .then((user) => {
+      dummyUser = user;
+      return dummyUser.getCart();
+    })
+    .then((cart) => {
+      if (!cart) {
+        console.log('Creating new dummy cart');
+        return dummyUser.createCart();
+      }
+      console.log('Dummy cart already exists');
+      return cart;
+    })
+    .then((cart) => console.log('Dummy user cart =>', cart));
+}
+
 setup()
   .then(createDummyUser)
+  .then(createCartForDummyUser)
   .then(() => {
     app.listen(3000, () => console.log('Server listening on port 3000'));
   })
