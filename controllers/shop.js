@@ -39,33 +39,28 @@ exports.getProductDetails = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.fetchCart((err, cart) => {
-    if (err) {
-      return next(err);
-    }
-    if (!cart?.products?.length) {
-      return res.render('shop/cart', {
+  let cart = null;
+  req.user
+    .getCart()
+    .then((cartFromDatabase) => {
+      cart = cartFromDatabase;
+      return cart.getProducts();
+    })
+    .then((products) => {
+      console.log(JSON.stringify({ products }, null, 2));
+      console.log(JSON.stringify({ cart }, null, 2));
+      const totalPrice = products.reduce((sum, curr) => {
+        return sum + curr.price * curr.cartItem.quantity;
+      }, 0);
+      res.render('shop/cart', {
         pageTitle: 'Your Cart',
         path: '/cart',
-        isCartEmpty: true,
+        isCartEmpty: !products?.length,
+        products,
+        totalPrice,
       });
-    }
-    Product.findAll()
-      .then((allProducts) => {
-        const productCart = { value: cart.totalPrice, items: [] };
-        for (const item of cart.products) {
-          const info = allProducts.find((p) => p.id === item.id);
-          productCart.items.push({ info, qty: item.qty });
-        }
-        res.render('shop/cart', {
-          pageTitle: 'Your Cart',
-          path: '/cart',
-          isCartEmpty: false,
-          cart: productCart,
-        });
-      })
-      .catch(next);
-  });
+    })
+    .catch(next);
 };
 
 exports.postCart = (req, res, next) => {

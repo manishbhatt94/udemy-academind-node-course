@@ -13,17 +13,17 @@ block content
   else
     section
       h2 Shopping Cart
-      p Total cart value: ₹#{cart.totalPrice}
+      p Total cart value: ₹#{totalPrice}
       h3 Cart Items
       ul
-        each item in cart.items
+        each prod in products
           li
-            a(href=(`/products/${item.info.id}`)) #{item.info.title}
+            a(href=(`/products/${prod.id}`)) #{prod.title}
             | &nbsp;◆&nbsp;
-            span Price: #{item.info.price.toFixed(2)}
+            span Price: #{prod.price.toFixed(2)}
             | &nbsp;◆&nbsp;
-            span Quantity: #{item.qty}
+            span Quantity: #{prod.cartItem.quantity}
             | &nbsp;◆&nbsp;
             form(action="/cart-delete-item", method="post")
-              input(type="hidden", name="productId", value=(item.info.id))
+              input(type="hidden", name="productId", value=(prod.id))
               button.btn(type="submit") Delete
