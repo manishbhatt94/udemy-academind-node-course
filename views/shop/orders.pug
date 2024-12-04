@@ -5,4 +5,17 @@ block styles
 
 
 block content
-  h1.text-center Orders page
+  if !orders.length
+    section.text-center
+      h2 Your have placed no orders yet!
+      a(href="/products") Check products to shop
+  else
+    section
+      h2 Your Orders
+      ul
+        each order in orders
+          li
+            strong Order ID: #{order.id}
+          ul Items ordered:
+            each product in order.products
+              li #{product.title} (Quantity: #{product.orderItem.quantity})
