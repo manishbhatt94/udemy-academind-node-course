@@ -19,6 +19,8 @@ router.get('/checkout', shopController.getCheckout);
 
 router.get('/orders', shopController.getOrders);
 
+router.post('/create-order', shopController.postOrder);
+
 router.get('/product-not-found', errorController.getProductNotFound);
 
 router.get('/', shopController.getIndex);

@@ -1,3 +1,4 @@
+const OrderItem = require('../models/order-item');
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
@@ -114,4 +115,30 @@ exports.getOrders = (req, res, next) => {
     pageTitle: 'Your Orders',
     path: '/orders',
   });
+};
+
+exports.postOrder = (req, res, next) => {
+  let cart = null;
+  let cartProducts = [];
+  req.user
+    .getCart()
+    .then((fetchedCart) => {
+      cart = fetchedCart;
+      return cart.getProducts();
+    })
+    .then((products) => {
+      cartProducts = products;
+      return req.user.createOrder();
+    })
+    .then((order) => {
+      const orderedProducts = cartProducts.map((product) => ({
+        orderId: order.id,
+        productId: product.id,
+        quantity: product.cartItem.quantity,
+      }));
+      return OrderItem.bulkCreate(orderedProducts);
+    })
+    .then(() => cart.setProducts(null))
+    .then(() => res.redirect('/orders'))
+    .catch(next);
 };
