@@ -33,6 +33,11 @@ class Product {
     const db = getDatabase();
     return db.collection('products').findOne({ _id: ObjectId.createFromHexString(id) });
   }
+
+  static deleteById(id) {
+    const db = getDatabase();
+    return db.collection('products').deleteOne({ _id: ObjectId.createFromHexString(id) });
+  }
 }
 
 module.exports = Product;
