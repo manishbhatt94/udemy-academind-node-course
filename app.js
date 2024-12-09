@@ -17,25 +17,10 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
 
-const sequelize = require('./util/database');
-const Product = require('./models/product');
-const User = require('./models/user');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cart-item');
-const Order = require('./models/order');
-const OrderItem = require('./models/order-item');
+const { mongoConnect } = require('./util/database');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use((req, res, next) => {
-  User.findByPk(1)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch(next);
-});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -46,58 +31,10 @@ app.use(errorController.get404);
 app.use(errorController.getGenericError);
 
 function setup() {
-  defineDatabaseRelations();
-  return sequelize.sync();
-
-  function defineDatabaseRelations() {
-    User.hasMany(Product);
-    Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-
-    User.hasOne(Cart);
-    Cart.belongsTo(User);
-
-    Cart.belongsToMany(Product, { through: CartItem });
-    Product.belongsToMany(Cart, { through: CartItem });
-
-    User.hasMany(Order);
-    Order.belongsTo(User);
-
-    Order.belongsToMany(Product, { through: OrderItem });
-    Product.belongsToMany(Order, { through: OrderItem });
-  }
-}
-
-function createDummyUser() {
-  return User.findByPk(1).then((user) => {
-    if (!user) {
-      console.log('Creating dummy user');
-      return User.create({ email: 'john.doe@fake.users.com', name: 'John Doe' });
-    }
-    console.log('Dummy user already exists');
-    return user;
-  });
-}
-
-function createCartForDummyUser() {
-  let dummyUser = null;
-  return User.findByPk(1)
-    .then((user) => {
-      dummyUser = user;
-      return dummyUser.getCart();
-    })
-    .then((cart) => {
-      if (!cart) {
-        console.log('Creating new dummy cart');
-        return dummyUser.createCart();
-      }
-      console.log('Dummy cart already exists');
-      return cart;
-    });
+  return mongoConnect();
 }
 
 setup()
-  .then(createDummyUser)
-  .then(createCartForDummyUser)
   .then(() => {
     app.listen(3000, () => console.log('Server listening on port 3000'));
   })

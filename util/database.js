@@ -1,10 +1,27 @@
-const Sequelize = require('sequelize');
+const { MongoClient } = require('mongodb');
 
-const DB_NAME = process.env.NODE_ENV === 'debug' ? 'debug_session_db_01' : 'udemytest_database_1';
+const URL = 'mongodb://localhost:27017';
+const DB_NAME = 'test_database_01';
 
-const sequelize = new Sequelize(DB_NAME, 'dummyduck', 'dummyduck', {
-  host: 'localhost',
-  dialect: 'mysql',
-});
+const client = new MongoClient(URL);
 
-module.exports = sequelize;
+let _db = null;
+
+function mongoConnect() {
+  return client.connect().then(() => {
+    console.log('Connected to Mongo database');
+    _db = client.db(DB_NAME);
+  });
+}
+
+function getDatabase() {
+  if (_db) {
+    return _db;
+  }
+  throw new Error('Database reference not available before connecting');
+}
+
+module.exports = {
+  mongoConnect,
+  getDatabase,
+};
