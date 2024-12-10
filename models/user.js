@@ -65,6 +65,32 @@ class User {
     return db.collection('users').updateOne({ _id: this._id }, { $set: { cart: updatedCart } });
   }
 
+  addOrder() {
+    const db = getDatabase();
+
+    return this.getCart()
+      .then((cart) => {
+        const order = {
+          items: cart.items,
+          user: {
+            _id: this._id,
+            name: this.name,
+          },
+        };
+        return db.collection('orders').insertOne(order);
+      })
+      .then(() => {
+        const updatedCart = { items: [] };
+        this.cart = updatedCart;
+        return db.collection('users').updateOne({ _id: this._id }, { $set: { cart: updatedCart } });
+      });
+  }
+
+  getOrders() {
+    const db = getDatabase();
+    return db.collection('orders').find({ 'user._id': this._id }).toArray();
+  }
+
   static findById(id) {
     const db = getDatabase();
     return db.collection('users').findOne({ _id: ObjectId.createFromHexString(id) });

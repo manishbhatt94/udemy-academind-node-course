@@ -15,7 +15,7 @@ block content
       ul
         each order in orders
           li
-            strong Order ID: #{order.id}
+            strong Order ID: #{order._id}
           ul Items ordered:
-            each product in order.products
-              li #{product.title} (Quantity: #{product.orderItem.quantity})
+            each product in order.items
+              li #{product.title} (Quantity: #{product.quantity})
