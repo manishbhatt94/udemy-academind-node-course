@@ -2,9 +2,14 @@ const { ObjectId } = require('mongodb');
 const { getDatabase } = require('../util/database');
 
 class User {
-  constructor({ name, email }) {
+  constructor({ _id, name, email }) {
     this.name = name;
     this.email = email;
+    if (_id) {
+      this._id = typeof _id === 'string' ? ObjectId.createFromHexString(_id) : _id;
+    } else {
+      this._id = null;
+    }
   }
 
   save() {
