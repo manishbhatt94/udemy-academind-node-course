@@ -18,6 +18,27 @@ class User {
     return db.collection('users').insertOne(this);
   }
 
+  addToCart(product) {
+    const { _id: productId } = product;
+    const { items: cartItems } = this.cart;
+    let updatedCartItems = [...cartItems];
+    let newProductQuantity = 1;
+    const existingItemIndex = cartItems.findIndex((item) => {
+      return productId.toString() === item.productId.toString();
+    });
+    if (existingItemIndex > -1) {
+      // product already exists in cart - need to increment quantity
+      newProductQuantity = cartItems[existingItemIndex].quantity + 1;
+      updatedCartItems[existingItemIndex].quantity = newProductQuantity;
+    } else {
+      // product doesn't already exist in cart
+      updatedCartItems.push({ productId, quantity: newProductQuantity });
+    }
+    const updatedCart = { items: updatedCartItems };
+    const db = getDatabase();
+    return db.collection('users').updateOne({ _id: this._id }, { $set: { cart: updatedCart } });
+  }
+
   static findById(id) {
     const db = getDatabase();
     return db.collection('users').findOne({ _id: ObjectId.createFromHexString(id) });

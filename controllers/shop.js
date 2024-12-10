@@ -62,32 +62,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const { productId } = req.body;
-  let cart = null;
-  let existingProduct = false;
-  req.user
-    .getCart()
-    .then((fetchedCart) => {
-      cart = fetchedCart;
-      return cart.getProducts({ where: { id: productId } });
-    })
-    .then((products) => {
-      if (products?.length > 0) {
-        existingProduct = true;
-        return products[0];
-      }
-      return Product.findByPk(productId);
-    })
-    .then((product) => {
-      if (existingProduct) {
-        return product.cartItem.increment('quantity');
-      }
-      return cart.addProduct(product, {
-        through: { quantity: 1 },
-      });
-    })
-    .then(() => {
-      res.redirect('/cart');
-    })
+  return Product.findById(productId)
+    .then((product) => req.user.addToCart(product))
+    .then(() => res.redirect('/cart'))
     .catch(next);
 };
 
