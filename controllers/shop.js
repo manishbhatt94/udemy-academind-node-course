@@ -67,10 +67,7 @@ exports.postCart = (req, res, next) => {
 exports.postCartDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
   req.user
-    .getCart()
-    .then((cart) => {
-      return cart.removeProduct(productId);
-    })
+    .deleteProductFromCart(productId)
     .then(() => res.redirect('/cart'))
     .catch(next);
 };
