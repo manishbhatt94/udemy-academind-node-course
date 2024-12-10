@@ -18,14 +18,14 @@ block content
       ul
         each prod in products
           li
-            a(href=(`/products/${prod.id}`)) #{prod.title}
+            a(href=(`/products/${prod.productId}`)) #{prod.title}
             | &nbsp;◆&nbsp;
             span Price: #{prod.price.toFixed(2)}
             | &nbsp;◆&nbsp;
-            span Quantity: #{prod.cartItem.quantity}
+            span Quantity: #{prod.quantity}
             | &nbsp;◆&nbsp;
             form(action="/cart-delete-item", method="post")
-              input(type="hidden", name="productId", value=(prod.id))
+              input(type="hidden", name="productId", value=(prod.productId))
               button.btn(type="submit") Delete
       form(action="/create-order", method="post")
         button.btn(type="submit") Order Now!

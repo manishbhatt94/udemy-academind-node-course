@@ -38,16 +38,12 @@ exports.getProductDetails = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  let cart = null;
   req.user
     .getCart()
-    .then((cartFromDatabase) => {
-      cart = cartFromDatabase;
-      return cart.getProducts();
-    })
-    .then((products) => {
+    .then((cart) => {
+      const { items: products } = cart;
       const totalPrice = products.reduce((sum, curr) => {
-        return sum + curr.price * curr.cartItem.quantity;
+        return sum + curr.price * curr.quantity;
       }, 0);
       res.render('shop/cart', {
         pageTitle: 'Your Cart',

@@ -39,6 +39,23 @@ class User {
     return db.collection('users').updateOne({ _id: this._id }, { $set: { cart: updatedCart } });
   }
 
+  getCart() {
+    const db = getDatabase();
+    const productIds = this.cart.items.map((item) => item.productId);
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        const cartProducts = this.cart.items.map((item, index) => {
+          delete products[index]._id;
+          delete products[index].userId;
+          return { ...item, ...products[index] };
+        });
+        return { items: cartProducts };
+      });
+  }
+
   static findById(id) {
     const db = getDatabase();
     return db.collection('users').findOne({ _id: ObjectId.createFromHexString(id) });
