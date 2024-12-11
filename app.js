@@ -24,10 +24,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('6756d72a812be431a3f42a3a')
+  User.findById('67596e5b3c07e87ba515b672')
     .then((user) => {
-      const { _id, name, email, cart } = user;
-      req.user = new User({ _id, name, email, cart });
+      req.user = user;
       next();
     })
     .catch(next);
@@ -45,8 +44,22 @@ function databaseConnect() {
   return mongoose.connect('mongodb://localhost:27017/test_database_01');
 }
 
+function createDefaultAdmin() {
+  return User.findOne().then((user) => {
+    if (!user) {
+      const defaultUser = new User({
+        name: 'Manish Machine',
+        email: 'manish.machine@email-this-guy.com',
+        cart: { items: [] },
+      });
+      return defaultUser.save();
+    }
+    return user;
+  });
+}
+
 function setup() {
-  return databaseConnect();
+  return databaseConnect().then(createDefaultAdmin);
 }
 
 setup()
