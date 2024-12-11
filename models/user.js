@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const Order = require('./order');
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -58,5 +60,33 @@ userSchema.methods.deleteProductFromCart = function deleteProductFromCart(produc
   return this.save();
 };
 
+userSchema.methods.addOrder = function addOrder() {
+  if (!this.cart.items.length) {
+    throw new Error('Cannot create order with empty cart');
+  }
+  return this.populate({
+    path: 'cart.items.product',
+    select: '-user',
+  })
+    .then((user) => {
+      const items = user.cart.items.map((item) => {
+        const { _id, title, price, description, imageUrl } = item.product;
+        return {
+          product: { _id, title, price, description, imageUrl },
+          quantity: item.quantity,
+        };
+      });
+      const order = new Order({ user, items });
+      return order.save();
+    })
+    .then(() => {
+      this.cart = { items: [] };
+      return this.save();
+    });
+};
+
+userSchema.methods.getOrders = function getOrders() {
+  return Order.find({ user: this });
+};
 
 module.exports = mongoose.model('User', userSchema);

@@ -17,5 +17,8 @@ block content
           li
             strong Order ID: #{order._id}
           ul Items ordered:
-            each product in order.items
-              li #{product.title} (Quantity: #{product.quantity})
+            each item in order.items
+              li
+                a(href=(`/products/${item.product._id}`)) #{item.product.title}
+                | &nbsp;◆&nbsp;
+                | (Quantity: #{item.quantity})
