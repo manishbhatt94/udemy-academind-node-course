@@ -44,5 +44,11 @@ userSchema.methods.addToCart = function addToCart(product) {
   return this.save();
 };
 
+userSchema.methods.getCart = function getCart() {
+  return this.populate({
+    path: 'cart.items.product',
+    select: '-user',
+  }).then((user) => user.cart);
+};
 
 module.exports = mongoose.model('User', userSchema);

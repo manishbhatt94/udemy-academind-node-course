@@ -16,16 +16,16 @@ block content
       p Total cart value: ₹#{totalPrice}
       h3 Cart Items
       ul
-        each prod in products
+        each item in items
           li
-            a(href=(`/products/${prod.productId}`)) #{prod.title}
+            a(href=(`/products/${item.product._id}`)) #{item.product.title}
             | &nbsp;◆&nbsp;
-            span Price: #{prod.price.toFixed(2)}
+            span Price: #{item.product.price.toFixed(2)}
             | &nbsp;◆&nbsp;
-            span Quantity: #{prod.quantity}
+            span Quantity: #{item.quantity}
             | &nbsp;◆&nbsp;
             form(action="/cart-delete-item", method="post")
-              input(type="hidden", name="productId", value=(prod.productId))
+              input(type="hidden", name="productId", value=(item.product._id))
               button.btn(type="submit") Delete
       form(action="/create-order", method="post")
         button.btn(type="submit") Order Now!

@@ -41,15 +41,15 @@ exports.getCart = (req, res, next) => {
   req.user
     .getCart()
     .then((cart) => {
-      const { items: products } = cart;
-      const totalPrice = products.reduce((sum, curr) => {
-        return sum + curr.price * curr.quantity;
+      const { items } = cart;
+      const totalPrice = items.reduce((sum, curr) => {
+        return sum + curr.product.price * curr.quantity;
       }, 0);
       res.render('shop/cart', {
         pageTitle: 'Your Cart',
         path: '/cart',
-        isCartEmpty: !products?.length,
-        products,
+        isCartEmpty: !items?.length,
+        items,
         totalPrice,
       });
     })
