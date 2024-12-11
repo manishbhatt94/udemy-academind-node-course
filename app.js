@@ -2,6 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -17,7 +18,6 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
 
-const { mongoConnect } = require('./util/database');
 const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,8 +41,12 @@ app.use(errorController.get404);
 // Express error middleware (err, req, res, next) format
 app.use(errorController.getGenericError);
 
+function databaseConnect() {
+  return mongoose.connect('mongodb://localhost:27017/test_database_01');
+}
+
 function setup() {
-  return mongoConnect();
+  return databaseConnect();
 }
 
 setup()
