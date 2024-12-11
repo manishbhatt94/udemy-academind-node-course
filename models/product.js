@@ -1,48 +1,24 @@
-const { ObjectId } = require('mongodb');
-const { getDatabase } = require('../util/database');
+const mongoose = require('mongoose');
 
-class Product {
-  constructor({ title, price, description, imageUrl, _id, userId }) {
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.imageUrl = imageUrl;
-    if (_id) {
-      this._id = typeof _id === 'string' ? ObjectId.createFromHexString(_id) : _id;
-    } else {
-      this._id = null;
-    }
-    this.userId = userId;
-  }
+const { Schema } = mongoose;
 
-  save() {
-    const db = getDatabase();
-    if (this._id) {
-      return db.collection('products').updateOne(
-        { _id: this._id },
-        {
-          $set: this,
-        }
-      );
-    } else {
-      return db.collection('products').insertOne(this);
-    }
-  }
+const productSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+});
 
-  static fetchAll() {
-    const db = getDatabase();
-    return db.collection('products').find({}).toArray();
-  }
-
-  static findById(id) {
-    const db = getDatabase();
-    return db.collection('products').findOne({ _id: ObjectId.createFromHexString(id) });
-  }
-
-  static deleteById(id) {
-    const db = getDatabase();
-    return db.collection('products').deleteOne({ _id: ObjectId.createFromHexString(id) });
-  }
-}
-
-module.exports = Product;
+module.exports = mongoose.model('Product', productSchema);
