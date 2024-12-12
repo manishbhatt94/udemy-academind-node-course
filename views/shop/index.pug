@@ -19,9 +19,9 @@ block content
           .card__actions
             a.btn(href=(`/products/${product._id}`)) Details
             include ../includes/add-to-cart.pug
-    .text-center
+    .centered
       a(href="/products") View all products
   else
-    .text-center
+    .centered
       h1 No Products
       a(href="/admin/add-product") Add a product
