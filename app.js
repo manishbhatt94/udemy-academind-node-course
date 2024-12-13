@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const path = require('path');
 
 const express = require('express');
@@ -8,11 +10,6 @@ const app = express();
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
-// app.set('views', 'views');
-
-// console.log("app.get('views') =", app.get('views'));
-// app.locals.basedir = app.get('views');
-// console.log('app.locals.basedir =', app.locals.basedir);
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -41,7 +38,7 @@ app.use(errorController.get404);
 app.use(errorController.getGenericError);
 
 function databaseConnect() {
-  return mongoose.connect('mongodb://localhost:27017/test_database_01');
+  return mongoose.connect(process.env.MONGO_CONNECTION_URI);
 }
 
 function createDefaultAdmin() {
