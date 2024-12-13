@@ -9,6 +9,7 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
+  // TODO: validate credentials and then store user in session
   User.findById('67596e5b3c07e87ba515b672')
     .then((user) => {
       req.session.user = user;
