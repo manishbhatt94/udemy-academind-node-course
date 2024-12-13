@@ -5,6 +5,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const app = express();
 
@@ -19,6 +21,20 @@ const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+const sessionStore = new MongoDBStore({
+  uri: process.env.MONGO_CONNECTION_URI,
+  collection: 'sessions',
+});
+
+app.use(
+  session({
+    secret: process.env.SESSION_COOKIE_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+  })
+);
 
 app.use((req, res, next) => {
   User.findById('67596e5b3c07e87ba515b672')
