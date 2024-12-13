@@ -2,3 +2,4 @@ node_modules
 data/*.json
 debug/*
 *.backup.js
+.env
