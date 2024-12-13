@@ -14,13 +14,14 @@ block content
           .card__image
             img(src=(product.imageUrl), alt=(product.title), width="320", height="240", loading="lazy")
           .card__content
-            h2.product__price ₹#{product.price}
+            h2.product__price ₹#{product.price.toFixed(2)}
             p.product__description #{product.description}
           .card__actions
-            button.btn Add to Cart
-    .text-center
+            a.btn(href=(`/products/${product._id}`)) Details
+            include ../includes/add-to-cart.pug
+    .centered
       a(href="/products") View all products
   else
-    .text-center
+    .centered
       h1 No Products
       a(href="/admin/add-product") Add a product

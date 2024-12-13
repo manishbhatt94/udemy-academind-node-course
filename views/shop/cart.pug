@@ -1,8 +1,31 @@
 extends ../layouts/main-layout.pug
 
 block styles
-  link(rel="stylesheet", href="/css/product.css")
+  link(rel="stylesheet", href="/css/cart.css")
 
 
 block content
-  h1.text-center Customer Shopping Cart page
+  h1.centered Customer Shopping Cart page
+  if isCartEmpty
+    section.centered
+      h2 Your shopping cart is empty
+      a(href="/products") Check products to shop
+  else
+    section.cart-wrapper
+      h2 Shopping Cart
+      p Total cart value: ₹#{totalPrice}
+      h3 Cart Items
+      ul.cart__item-list
+        each item in items
+          li.cart__item
+            a(href=(`/products/${item.product._id}`)) #{item.product.title}
+            | &nbsp;◆&nbsp;
+            span Price: #{item.product.price.toFixed(2)}
+            | &nbsp;◆&nbsp;
+            span Quantity: #{item.quantity}
+            | &nbsp;◆&nbsp;
+            form(action="/cart-delete-item", method="post")
+              input(type="hidden", name="productId", value=(item.product._id))
+              button.btn(type="submit") Delete
+      form(action="/create-order", method="post")
+        button.btn(type="submit") Order Now!
