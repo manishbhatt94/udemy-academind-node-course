@@ -4,7 +4,15 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: req.session.isLoggedIn,
+    isAuthenticated: false,
+  });
+};
+
+exports.getSignup = (req, res, next) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false,
   });
 };
 
@@ -32,3 +40,5 @@ exports.postLogout = (req, res, next) => {
     res.redirect('/');
   });
 };
+
+exports.postSignup = (req, res, next) => {};
