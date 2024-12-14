@@ -37,6 +37,24 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  const userIdFromSession = req.session.user?._id;
+  if (!userIdFromSession) {
+    return next();
+  }
+  User.findById(userIdFromSession)
+    .then((user) => {
+      // storing reference to mongoose document obj, so we have access to
+      // the methods defined in User model, as well
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log('Error in fetching user in middleware', err);
+      next();
+    });
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
