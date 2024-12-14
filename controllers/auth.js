@@ -41,4 +41,22 @@ exports.postLogout = (req, res, next) => {
   });
 };
 
-exports.postSignup = (req, res, next) => {};
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+  // TODO: Check if password matches confirmPassword
+  User.findOne({ email })
+    .then((existingUser) => {
+      if (existingUser) {
+        // TODO: Show error to user that an account already exists with the provided email
+        return res.redirect('/signup');
+      }
+      const user = new User({
+        email,
+        password,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then(() => res.redirect('/login'))
+    .catch(next);
+};
