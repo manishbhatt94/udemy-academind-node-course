@@ -68,22 +68,8 @@ function databaseConnect() {
   return mongoose.connect(process.env.MONGO_CONNECTION_URI);
 }
 
-function createDefaultAdmin() {
-  return User.findOne().then((user) => {
-    if (!user) {
-      const defaultUser = new User({
-        name: 'Manish Machine',
-        email: 'manish.machine@email-this-guy.com',
-        cart: { items: [] },
-      });
-      return defaultUser.save();
-    }
-    return user;
-  });
-}
-
 function setup() {
-  return databaseConnect().then(createDefaultAdmin);
+  return databaseConnect();
 }
 
 setup()
