@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 const app = express();
 
@@ -36,6 +37,9 @@ app.use(
     store: sessionStore,
   })
 );
+
+const csrfProtection = csrf();
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   const userIdFromSession = req.session.user?._id;
