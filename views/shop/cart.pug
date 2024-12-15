@@ -25,7 +25,9 @@ block content
             span Quantity: #{item.quantity}
             | &nbsp;◆&nbsp;
             form(action="/cart-delete-item", method="post")
+              input(type="hidden", name="_csrf", value=(csrfToken))
               input(type="hidden", name="productId", value=(item.product._id))
               button.btn(type="submit") Delete
       form(action="/create-order", method="post")
+        input(type="hidden", name="_csrf", value=(csrfToken))
         button.btn(type="submit") Order Now!

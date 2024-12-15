@@ -11,6 +11,7 @@ block content
     method="post",
     autocomplete="off"
   )
+    input(type="hidden", name="_csrf", value=(csrfToken))
     .form-control
       label(for="email") Email
       input#email(type="email", name="email")
