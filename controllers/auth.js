@@ -2,10 +2,21 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
+function getFlashMessage(req) {
+  let message = req.flash('error');
+  if (message.length) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  return message;
+}
+
 exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
+    errorMessage: getFlashMessage(req),
   });
 };
 
@@ -13,6 +24,7 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
+    errorMessage: getFlashMessage(req),
   });
 };
 
@@ -21,6 +33,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (!user) {
+        req.flash('error', 'Invalid email or password.');
         return res.redirect('/login');
       }
       bcrypt
@@ -36,6 +49,7 @@ exports.postLogin = (req, res, next) => {
               res.redirect('/');
             });
           } else {
+            req.flash('error', 'Invalid email or password.');
             res.redirect('/login');
           }
         })
@@ -59,7 +73,10 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email })
     .then((existingUser) => {
       if (existingUser) {
-        // TODO: Show error to user that an account already exists with the provided email
+        req.flash(
+          'error',
+          'An account with this email already exists. Please pick a different email address'
+        );
         return res.redirect('/signup');
       }
       return bcrypt

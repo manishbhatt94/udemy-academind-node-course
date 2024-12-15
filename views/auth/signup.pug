@@ -6,6 +6,8 @@ block styles
 
 
 block content
+  if errorMessage
+    p.user-message.user-message__error #{errorMessage}
   form.login-form(
     action="/signup",
     method="post",
