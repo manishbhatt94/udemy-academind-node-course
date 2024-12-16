@@ -8,7 +8,7 @@ block content
   .centered
     h1 #{product.title}
     hr
-    div
+    div.banner-img
       img(src=(product.imageUrl), alt=(product.title), width="640", height="480")
     h2 ₹#{product.price.toFixed(2)}
     p #{product.description}

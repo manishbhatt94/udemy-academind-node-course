@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const app = express();
 
@@ -37,6 +39,11 @@ app.use(
   })
 );
 
+const csrfProtection = csrf();
+app.use(csrfProtection);
+
+app.use(flash());
+
 app.use((req, res, next) => {
   const userIdFromSession = req.session.user?._id;
   if (!userIdFromSession) {
@@ -55,6 +62,12 @@ app.use((req, res, next) => {
     });
 });
 
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -68,22 +81,8 @@ function databaseConnect() {
   return mongoose.connect(process.env.MONGO_CONNECTION_URI);
 }
 
-function createDefaultAdmin() {
-  return User.findOne().then((user) => {
-    if (!user) {
-      const defaultUser = new User({
-        name: 'Manish Machine',
-        email: 'manish.machine@email-this-guy.com',
-        cart: { items: [] },
-      });
-      return defaultUser.save();
-    }
-    return user;
-  });
-}
-
 function setup() {
-  return databaseConnect().then(createDefaultAdmin);
+  return databaseConnect();
 }
 
 setup()

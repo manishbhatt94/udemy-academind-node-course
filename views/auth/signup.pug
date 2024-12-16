@@ -9,7 +9,7 @@ block content
   if errorMessage
     p.user-message.user-message__error #{errorMessage}
   form.login-form(
-    action="/login",
+    action="/signup",
     method="post",
     autocomplete="off"
   )
@@ -20,4 +20,7 @@ block content
     .form-control
       label(for="password") Password
       input#password(type="password", name="password")
-    button.btn(type="submit") Login
+    .form-control
+      label(for="confirmPassword") Confirm Password
+      input#confirmPassword(type="password", name="confirmPassword")
+    button.btn(type="submit") Signup

@@ -20,10 +20,13 @@ header.main-header
       if isAuthenticated
         li.main-header__item
           form(action="/logout", method="post")
+            input(type="hidden", name="_csrf", value=(csrfToken))
             button(type="submit") Logout
       else
         li.main-header__item
           a(href="/login", class=(path === "/login" && "active")) Login
+        li.main-header__item
+          a(href="/signup", class=(path === "/signup" && "active")) Signup
 nav.mobile-nav
   ul.mobile-nav__item-list
     li.mobile-nav__item
@@ -43,7 +46,10 @@ nav.mobile-nav
     if isAuthenticated
       li.mobile-nav__item
         form(action="/logout", method="post")
+          input(type="hidden", name="_csrf", value=(csrfToken))
           button(type="submit") Logout
     else
       li.mobile-nav__item
         a(href="/login", class=(path === "/login" && "active")) Login
+      li.mobile-nav__item
+        a(href="/signup", class=(path === "/signup" && "active")) Signup
