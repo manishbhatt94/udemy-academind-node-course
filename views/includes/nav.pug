@@ -18,6 +18,9 @@ header.main-header
           a(href="/admin/products", class=(path === "/admin/products" && "active")) Admin Products
     ul.main-header__item-list
       if isAuthenticated
+        if loggedInUserEmail
+          li.mobile-nav__item
+            span.logged-in-user (👤 #{loggedInUserEmail} )
         li.main-header__item
           form(action="/logout", method="post")
             input(type="hidden", name="_csrf", value=(csrfToken))
@@ -44,6 +47,9 @@ nav.mobile-nav
         a(href="/admin/products", class=(path === "/admin/products" && "active")) Admin Products
   ul.mobile-nav__item-list
     if isAuthenticated
+      if loggedInUserEmail
+        li.mobile-nav__item
+          span.logged-in-user (👤 #{loggedInUserEmail} )
       li.mobile-nav__item
         form(action="/logout", method="post")
           input(type="hidden", name="_csrf", value=(csrfToken))
