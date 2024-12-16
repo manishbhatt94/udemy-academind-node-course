@@ -9,7 +9,7 @@ block content
   if errorMessage
     p.user-message.user-message__error #{errorMessage}
   form.login-form(
-    action="/login",
+    action="/reset",
     method="post",
     autocomplete="off"
   )
@@ -17,9 +17,4 @@ block content
     .form-control
       label(for="email") Email
       input#email(type="email", name="email")
-    .form-control
-      label(for="password") Password
-      input#password(type="password", name="password")
-    button.btn(type="submit") Login
-  .centered
-    a(href="/reset") Reset Password
+    button.btn(type="submit") Reset Password

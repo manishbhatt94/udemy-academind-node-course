@@ -1,3 +1,4 @@
+const crypto = require('node:crypto');
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
@@ -90,6 +91,89 @@ exports.postSignup = (req, res, next) => {
           return user.save();
         })
         .then(() => res.redirect('/login'));
+    })
+    .catch(next);
+};
+
+exports.getReset = (req, res, next) => {
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    errorMessage: getFlashMessage(req),
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  const { email } = req.body;
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      req.flash('error', 'Failed to reset. Please try again!');
+      console.log(err);
+      return res.redirect('/reset');
+    }
+    const token = buffer.toString('hex');
+    User.findOne({ email })
+      .then((user) => {
+        if (!user) {
+          req.flash('error', 'No account with that email found');
+          return res.redirect('/reset');
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000; // 1 hour = 60 * 60 * 1000 ms
+        console.log(user);
+        return user.save();
+      })
+      .then(() => {
+        console.log(`Click this link to reset password: http://localhost:3000/reset/${token} `);
+        res.redirect('/');
+      })
+      .catch(next);
+  });
+};
+
+exports.getNewPassword = (req, res, next) => {
+  const { token } = req.params;
+  User.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.redirect('/reset');
+      }
+      res.render('auth/new-password', {
+        path: '/new-password',
+        pageTitle: 'Update Password',
+        token,
+        userId: user._id,
+        errorMessage: getFlashMessage(req),
+      });
+    })
+    .catch(next);
+};
+
+exports.postNewPassword = (req, res, next) => {
+  const { userId, token, password: newPassword } = req.body;
+  User.findOne({
+    _id: userId,
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then((user) => {
+      if (!user) {
+        req.flash('error', 'Existing user not found');
+        return res.redirect('/reset');
+      }
+      return bcrypt
+        .hash(newPassword, 12)
+        .then((hashedPassword) => {
+          user.password = hashedPassword;
+          user.resetToken = undefined;
+          user.resetTokenExpiration = undefined;
+          return user.save();
+        })
+        .then(() => res.redirect('/login'))
+        .catch(console.error);
     })
     .catch(next);
 };
