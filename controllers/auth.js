@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
+const mailer = require('../util/email');
 
 function getFlashMessage(req) {
   let message = req.flash('error');
@@ -89,7 +90,16 @@ exports.postSignup = (req, res, next) => {
           });
           return user.save();
         })
-        .then(() => res.redirect('/login'));
+        .then(() => {
+          res.redirect('/login');
+          return mailer.sendMail({
+            to: email,
+            from: 'shop@node-complete.com',
+            subject: 'Signup done: Welcome onboard!🎉',
+            html: '<h1>Congrats! You have signed up on our website.</h1><p>Hope to see you around!✌️</p>',
+          });
+        })
+        .catch((err) => console.log(err));
     })
     .catch(next);
 };
