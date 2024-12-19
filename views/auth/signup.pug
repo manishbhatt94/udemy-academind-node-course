@@ -14,13 +14,13 @@ block content
     autocomplete="off"
   )
     input(type="hidden", name="_csrf", value=(csrfToken))
-    .form-control
+    .form-control(class=(validationErrors.email ? 'invalid' : ''))
       label(for="email") Email
-      input#email(type="email", name="email")
-    .form-control
+      input#email(type="email", name="email", value=(oldInput.email))
+    .form-control(class=(validationErrors.password ? 'invalid' : ''))
       label(for="password") Password
-      input#password(type="password", name="password")
-    .form-control
+      input#password(type="password", name="password", value=(oldInput.password))
+    .form-control(class=(validationErrors.confirmPassword ? 'invalid' : ''))
       label(for="confirmPassword") Confirm Password
-      input#confirmPassword(type="password", name="confirmPassword")
+      input#confirmPassword(type="password", name="confirmPassword", value=(oldInput.confirmPassword))
     button.btn(type="submit") Signup

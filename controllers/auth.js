@@ -1,5 +1,6 @@
 const crypto = require('node:crypto');
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 const User = require('../models/user');
 
@@ -18,6 +19,8 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     pageTitle: 'Login',
     errorMessage: getFlashMessage(req),
+    oldInput: { email: '', password: '' },
+    validationErrors: {},
   });
 };
 
@@ -26,11 +29,23 @@ exports.getSignup = (req, res, next) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage: getFlashMessage(req),
+    oldInput: { email: '', password: '', confirmPassword: '' },
+    validationErrors: {},
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage: result.array({ onlyFirstError: true })[0].msg,
+      validationErrors: result.mapped(),
+      oldInput: { email, password },
+    });
+  }
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -70,28 +85,27 @@ exports.postLogout = (req, res, next) => {
 
 exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
-  // TODO: Check if password matches confirmPassword
-  User.findOne({ email })
-    .then((existingUser) => {
-      if (existingUser) {
-        req.flash(
-          'error',
-          'An account with this email already exists. Please pick a different email address'
-        );
-        return res.redirect('/signup');
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const user = new User({
-            email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then(() => res.redirect('/login'));
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: result.array({ onlyFirstError: true })[0].msg,
+      validationErrors: result.mapped(),
+      oldInput: { email, password, confirmPassword },
+    });
+  }
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
     })
+    .then(() => res.redirect('/login'))
     .catch(next);
 };
 
