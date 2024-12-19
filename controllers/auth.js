@@ -19,6 +19,7 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     pageTitle: 'Login',
     errorMessage: getFlashMessage(req),
+    oldInput: { email: '', password: '' },
   });
 };
 
@@ -35,10 +36,11 @@ exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    return res.render('auth/login', {
+    return res.status(422).render('auth/login', {
       path: '/login',
       pageTitle: 'Login',
       errorMessage: result.array()[0].msg,
+      oldInput: { email, password },
     });
   }
   User.findOne({ email })
