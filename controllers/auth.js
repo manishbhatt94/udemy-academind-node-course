@@ -20,6 +20,7 @@ exports.getLogin = (req, res, next) => {
     pageTitle: 'Login',
     errorMessage: getFlashMessage(req),
     oldInput: { email: '', password: '' },
+    validationErrors: {},
   });
 };
 
@@ -29,6 +30,7 @@ exports.getSignup = (req, res, next) => {
     pageTitle: 'Signup',
     errorMessage: getFlashMessage(req),
     oldInput: { email: '', password: '', confirmPassword: '' },
+    validationErrors: {},
   });
 };
 
@@ -39,7 +41,8 @@ exports.postLogin = (req, res, next) => {
     return res.status(422).render('auth/login', {
       path: '/login',
       pageTitle: 'Login',
-      errorMessage: result.array()[0].msg,
+      errorMessage: result.array({ onlyFirstError: true })[0].msg,
+      validationErrors: result.mapped(),
       oldInput: { email, password },
     });
   }
@@ -87,7 +90,8 @@ exports.postSignup = (req, res, next) => {
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
-      errorMessage: result.array()[0].msg,
+      errorMessage: result.array({ onlyFirstError: true })[0].msg,
+      validationErrors: result.mapped(),
       oldInput: { email, password, confirmPassword },
     });
   }
