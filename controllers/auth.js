@@ -27,6 +27,7 @@ exports.getSignup = (req, res, next) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage: getFlashMessage(req),
+    oldInput: { email: '', password: '', confirmPassword: '' },
   });
 };
 
@@ -78,13 +79,14 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, confirmPassword } = req.body;
   const result = validationResult(req);
   if (!result.isEmpty()) {
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
       errorMessage: result.array()[0].msg,
+      oldInput: { email, password, confirmPassword },
     });
   }
   bcrypt

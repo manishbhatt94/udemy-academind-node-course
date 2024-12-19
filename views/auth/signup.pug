@@ -16,11 +16,11 @@ block content
     input(type="hidden", name="_csrf", value=(csrfToken))
     .form-control
       label(for="email") Email
-      input#email(type="email", name="email")
+      input#email(type="email", name="email", value=(oldInput.email))
     .form-control
       label(for="password") Password
-      input#password(type="password", name="password")
+      input#password(type="password", name="password", value=(oldInput.password))
     .form-control
       label(for="confirmPassword") Confirm Password
-      input#confirmPassword(type="password", name="confirmPassword")
+      input#confirmPassword(type="password", name="confirmPassword", value=(oldInput.confirmPassword))
     button.btn(type="submit") Signup
