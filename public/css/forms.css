@@ -26,7 +26,8 @@
   color: red;
 }
 
-.form-control.invalid input {
+.form-control.invalid input,
+.form-control.invalid textarea {
   border-color: red;
 }
 
