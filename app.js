@@ -51,6 +51,9 @@ app.use((req, res, next) => {
   }
   User.findById(userIdFromSession)
     .then((user) => {
+      if (!user) {
+        return next();
+      }
       // storing reference to mongoose document obj, so we have access to
       // the methods defined in User model, as well
       req.user = user;
