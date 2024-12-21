@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-const csrf = require('csurf');
 const flash = require('connect-flash');
 
 const app = express();
@@ -15,6 +14,7 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+const { csrfWrappedMiddleware } = require('./middlewares/csrf');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
@@ -39,8 +39,7 @@ app.use(
   })
 );
 
-const csrfProtection = csrf();
-app.use(csrfProtection);
+app.use(csrfWrappedMiddleware);
 
 app.use(flash());
 
@@ -68,7 +67,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.loggedInUserEmail = req.session.user?.email;
-  res.locals.csrfToken = req.csrfToken();
+  res.locals.csrfToken = req.csrfToken?.();
   next();
 });
 
