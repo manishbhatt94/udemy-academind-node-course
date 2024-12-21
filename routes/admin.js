@@ -47,8 +47,10 @@ router.get('/edit-product/:productId', isAuth, adminController.getEditProduct);
 // /admin/edit-product => POST
 router.post(
   '/edit-product',
-  addEditProductValidationMiddlewares(),
   isAuth,
+  upload.single('image'),
+  csrfProtection,
+  addEditProductValidationMiddlewares(),
   adminController.postEditProduct
 );
 

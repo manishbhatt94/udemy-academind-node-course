@@ -14,15 +14,27 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
-  console.log('req.file =>', req.file);
+  const { title, price, description } = req.body;
+  const uploadedImage = req.file;
+  if (!uploadedImage) {
+    return res.status(422).render('admin/add-edit-product', {
+      path: '/admin/add-product',
+      pageTitle: 'Add Product',
+      editing: false,
+      product: { title, price, description },
+      hasError: true,
+      errorMessage: 'Attached file is not an image.',
+      validationErrors: {},
+    });
+  }
+
   const result = validationResult(req);
   if (!result.isEmpty()) {
     return res.status(422).render('admin/add-edit-product', {
       path: '/admin/add-product',
       pageTitle: 'Add Product',
       editing: false,
-      product: { title, imageUrl, price, description },
+      product: { title, price, description },
       hasError: true,
       errorMessage: result.array({ onlyFirstError: true })[0].msg,
       validationErrors: result.mapped(),
@@ -30,7 +42,7 @@ exports.postAddProduct = (req, res, next) => {
   }
   const product = new Product({
     title,
-    imageUrl,
+    imageUrl: '/' + uploadedImage.path,
     price: Number(price),
     description,
     user: req.session.user,
@@ -65,14 +77,15 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const { id, title, imageUrl, price, description } = req.body;
+  const { id, title, price, description } = req.body;
+  const uploadedImage = req.file;
   const result = validationResult(req);
   if (!result.isEmpty()) {
     return res.status(422).render('admin/add-edit-product', {
       path: '/admin/add-product',
       pageTitle: 'Edit Product',
       editing: true,
-      product: { _id: id, title, imageUrl, price, description },
+      product: { _id: id, title, price, description },
       hasError: true,
       errorMessage: result.array({ onlyFirstError: true })[0].msg,
       validationErrors: result.mapped(),
@@ -84,7 +97,9 @@ exports.postEditProduct = (req, res, next) => {
         return res.redirect('/admin/products');
       }
       product.title = title;
-      product.imageUrl = imageUrl;
+      if (uploadedImage) {
+        product.imageUrl = '/' + uploadedImage.path;
+      }
       product.price = Number(price);
       product.description = description;
       return product.save().then(() => {
