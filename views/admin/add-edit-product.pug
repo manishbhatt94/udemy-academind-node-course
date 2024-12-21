@@ -9,17 +9,18 @@ block content
   if errorMessage
     p.user-message.user-message__error #{errorMessage}
   form.product-form(
-    action=(editing ? `/admin/edit-product` :"/admin/add-product"),
+    action=(editing ? `/admin/edit-product` : "/admin/add-product"),
     method="post",
+    enctype="multipart/form-data",
     autocomplete="off"
   )
     input(type="hidden", name="_csrf", value=(csrfToken))
     .form-control(class=(validationErrors.title ? 'invalid' : ''))
       label(for="title") Title
       input#title(type="text", name="title", value=(editing || hasError ? product.title : ''))
-    .form-control(class=(validationErrors.imageUrl ? 'invalid' : ''))
-      label(for="imageUrl") Image URL
-      input#imageUrl(type="url", name="imageUrl", value=(editing || hasError ? product.imageUrl : ''))
+    .form-control
+      label(for="image") Image
+      input#image(type="file", name="image")
     .form-control(class=(validationErrors.price ? 'invalid' : ''))
       label(for="price") Price
       input#price(type="number", name="price", step="0.01", value=(editing || hasError ? product.price : ''))

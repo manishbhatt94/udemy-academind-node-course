@@ -1,4 +1,5 @@
 node_modules
+images/*
 data/*.json
 debug/*
 *.backup.js
