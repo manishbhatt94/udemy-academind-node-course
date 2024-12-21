@@ -24,6 +24,7 @@ const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const sessionStore = new MongoDBStore({
   uri: process.env.MONGO_CONNECTION_URI,
