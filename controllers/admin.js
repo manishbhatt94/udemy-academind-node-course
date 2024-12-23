@@ -1,6 +1,11 @@
+const path = require('node:path');
+const fs = require('node:fs');
 const { validationResult } = require('express-validator');
 
 const Product = require('../models/product');
+const projectRootPath = require('../util/path');
+
+console.log('projectRootPath:', projectRootPath);
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/add-edit-product', {
@@ -98,6 +103,7 @@ exports.postEditProduct = (req, res, next) => {
       }
       product.title = title;
       if (uploadedImage) {
+        deleteProductImageFromFS(product.imageUrl);
         product.imageUrl = '/' + uploadedImage.path;
       }
       product.price = Number(price);
@@ -111,7 +117,14 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const { id } = req.body;
-  Product.deleteOne({ _id: id, user: req.user._id })
+  Product.findById(id)
+    .then((product) => {
+      if (!product) {
+        return next(new Error('Product not found.'));
+      }
+      deleteProductImageFromFS(product.imageUrl);
+      return product.deleteOne();
+    })
     .then(() => {
       res.redirect(`/admin/products`);
     })
@@ -129,3 +142,12 @@ exports.getAdminProducts = (req, res, next) => {
     })
     .catch(next);
 };
+
+function deleteProductImageFromFS(imageUrl) {
+  const imagePath = path.join(projectRootPath, imageUrl.substring(1));
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      console.log('Error deleting image:', err);
+    }
+  });
+}
