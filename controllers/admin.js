@@ -5,8 +5,6 @@ const { validationResult } = require('express-validator');
 const Product = require('../models/product');
 const projectRootPath = require('../util/path');
 
-console.log('projectRootPath:', projectRootPath);
-
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/add-edit-product', {
     pageTitle: 'Add Product',

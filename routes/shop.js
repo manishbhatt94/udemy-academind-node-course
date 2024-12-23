@@ -1,14 +1,16 @@
 const express = require('express');
 
+const isAuth = require('../middlewares/is-auth');
+const getPaginationHelper = require('../middlewares/pagination');
 const shopController = require('../controllers/shop');
 const errorController = require('../controllers/error');
-const isAuth = require('../middlewares/is-auth');
+const Product = require('../models/product');
 
 const router = express.Router();
 
 router.get('/products/:productId', shopController.getProductDetails);
 
-router.get('/products', shopController.getProducts);
+router.get('/products', getPaginationHelper(Product), shopController.getProducts);
 
 router.get('/cart', isAuth, shopController.getCart);
 

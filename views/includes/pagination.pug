@@ -1,0 +1,6 @@
+section.pagination
+  if pagination.hasPrevious
+    a(href=(`?page=${pagination.currentPage - 1}`)) &lt;
+  a.active-page(href=(`?page=${pagination.currentPage}`)) #{pagination.currentPage}
+  if pagination.hasNext
+    a(href=(`?page=${pagination.currentPage + 1}`)) &gt;

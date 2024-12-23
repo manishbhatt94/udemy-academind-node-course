@@ -4,7 +4,10 @@ const Order = require('../models/order');
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
+  const { pagination } = res.locals;
   Product.find()
+    .skip(pagination.skip)
+    .limit(pagination.limit)
     .then((products) => {
       res.render('shop/product-list', {
         prods: products,
@@ -17,6 +20,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   Product.find()
+    .limit(3)
     .then((products) => {
       res.render('shop/index', {
         prods: products,

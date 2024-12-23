@@ -20,7 +20,8 @@ block content
             a.btn(href=(`/products/${product._id}`)) Details
             include ../includes/add-to-cart.pug
     .centered
-      a(href="/products") View all products
+      strong
+        a(href="/products") View all products
   else
     .centered
       h1 No Products
