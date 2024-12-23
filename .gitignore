@@ -1,6 +1,7 @@
 node_modules
 images/*
 data/*.json
+data/invoices/*
 debug/*
 *.backup.js
 .env

@@ -1,3 +1,6 @@
+const path = require('node:path');
+
+const Order = require('../models/order');
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
@@ -97,4 +100,29 @@ exports.postOrder = (req, res, next) => {
     .addOrder()
     .then(() => res.redirect('/orders'))
     .catch(next);
+};
+
+exports.getInvoice = (req, res, next) => {
+  const { orderId } = req.params;
+  Order.findById(orderId)
+    .then((order) => {
+      if (!order) {
+        return next(new Error('No order found.'));
+      }
+      if (order.user.toString() !== req.user._id.toString()) {
+        return next(new Error('Unauthorized'));
+      }
+      const invoiceFileName = `invoice-${orderId}.pdf`;
+      const invoiceFilePath = path.join('data', 'invoices', invoiceFileName);
+      res.download(invoiceFilePath, invoiceFileName);
+    })
+    .catch(next);
+  /**
+   * Or res.send() the file as a response
+   * and set the appropriate headers
+   * res.setHeader('Content-Type', 'application/pdf');
+   * res.setHeader('Content-Disposition', `inline; filename="${invoiceFileName}"`);
+   * or
+   * res.setHeader('Content-Disposition', `attachment; filename="${invoiceFileName}"`);
+   */
 };
