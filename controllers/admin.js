@@ -113,9 +113,9 @@ exports.postEditProduct = (req, res, next) => {
     .catch(next);
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const { id } = req.body;
-  Product.findById(id)
+exports.deleteProduct = (req, res, next) => {
+  const { productId } = req.params;
+  Product.findById(productId)
     .then((product) => {
       if (!product) {
         return next(new Error('Product not found.'));
@@ -124,9 +124,11 @@ exports.postDeleteProduct = (req, res, next) => {
       return product.deleteOne();
     })
     .then(() => {
-      res.redirect(`/admin/products`);
+      res.status(200).json({ success: true, message: 'Success!' });
     })
-    .catch(next);
+    .catch((err) => {
+      res.status(500).json({ message: 'Deleting product failed.' });
+    });
 };
 
 exports.getAdminProducts = (req, res, next) => {

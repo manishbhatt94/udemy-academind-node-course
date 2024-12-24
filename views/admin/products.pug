@@ -3,6 +3,8 @@ extends ../layouts/main-layout.pug
 block styles
   link(rel="stylesheet", href="/css/product.css")
 
+block scripts
+  script(src="/js/admin.js", defer="")
 
 block content
   if prods.length > 0
@@ -18,10 +20,10 @@ block content
             p.product__description #{product.description}
           .card__actions
             a.btn(href=(`/admin/edit-product/${product._id}?edit=true`)) Edit
-            form(action="/admin/delete-product", method="post")
+            form
               input(type="hidden", name="_csrf", value=(csrfToken))
               input(type="hidden", name="id", value=(product._id))
-              button.btn(type="submit") Delete
+              button.btn(type="button", data-action="delete-product") Delete
     include ../includes/pagination.pug
   else
     .centered
