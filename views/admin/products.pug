@@ -22,6 +22,7 @@ block content
               input(type="hidden", name="_csrf", value=(csrfToken))
               input(type="hidden", name="id", value=(product._id))
               button.btn(type="submit") Delete
+    include ../includes/pagination.pug
   else
     .centered
       h1 No Products

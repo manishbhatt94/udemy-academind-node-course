@@ -130,7 +130,10 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getAdminProducts = (req, res, next) => {
+  const { pagination } = res.locals;
   Product.find({ user: req.user._id })
+    .skip(pagination.skip)
+    .limit(pagination.limit)
     .then((products) => {
       res.render('admin/products', {
         prods: products,

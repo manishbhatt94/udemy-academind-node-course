@@ -4,7 +4,9 @@ const multer = require('multer');
 
 const isAuth = require('../middlewares/is-auth');
 const { csrfProtection } = require('../middlewares/csrf');
+const getPaginationHelper = require('../middlewares/pagination');
 const adminController = require('../controllers/admin');
+const Product = require('../models/product');
 
 const router = express.Router();
 
@@ -58,7 +60,7 @@ router.post(
 router.post('/delete-product', isAuth, adminController.postDeleteProduct);
 
 // /admin/products => GET
-router.get('/products', isAuth, adminController.getAdminProducts);
+router.get('/products', isAuth, getPaginationHelper(Product), adminController.getAdminProducts);
 
 module.exports = router;
 
