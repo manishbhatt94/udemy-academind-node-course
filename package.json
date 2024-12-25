@@ -8,8 +8,16 @@
     "start": "nodemon app.js",
     "start-server": "node app.js"
   },
-  "author": "Maximilian Schwarzmüller",
+  "author": "Manish Bhatt",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manishbhatt94/udemy-academind-node-course.git"
+  },
+  "homepage": "https://github.com/manishbhatt94/udemy-academind-node-course#readme",
+  "bugs": {
+    "url": "https://github.com/manishbhatt94/udemy-academind-node-course/issues"
+  },
   "devDependencies": {
     "nodemon": "^1.18.3"
   },
