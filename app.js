@@ -3,6 +3,7 @@ require('dotenv').config();
 const path = require('path');
 
 const express = require('express');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -22,6 +23,7 @@ const errorController = require('./controllers/error');
 
 const User = require('./models/user');
 
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
